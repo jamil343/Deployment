@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,27 +34,27 @@ jobs:
         context: ./frontend
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+        
+deploy:
+   needs: build
+   runs-on: ubuntu-latest
 
-  deploy:
-  needs: build
-  runs-on: ubuntu-latest
+   steps:
+   - name: Checkout code
+     uses: actions/checkout@v3
 
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v3
-
-  - name: Copy docker-compose.yml to EC2
-    uses: appleboy/scp-action@v0.1.4
-    with:
+   - name: Copy docker-compose.yml to EC2
+     uses: appleboy/scp-action@v0.1.4
+     with:
       host: ${{ secrets.SERVER_IP }}
       username: ${{ secrets.SERVER_USER }}
       key: ${{ secrets.SSH_PRIVATE_KEY }}
       source: "./docker-compose.yml"
       target: "~/docker-compose.yml"
 
-  - name: Deploy to EC2
-    uses: appleboy/ssh-action@v0.1.8
-    with:
+   - name: Deploy to EC2
+     uses: appleboy/ssh-action@v0.1.8
+     with:
       host: ${{ secrets.SERVER_IP }}
       username: ${{ secrets.SERVER_USER }}
       key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -63,4 +62,5 @@ jobs:
         cd ~
         docker-compose down
         docker-compose up -d
+
 
