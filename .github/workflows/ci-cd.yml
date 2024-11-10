@@ -52,12 +52,15 @@ jobs:
       source: "./docker-compose.yml"
       target: "~/docker-compose.yml"
 
-   - name: Deploy to EC2
-     uses: appleboy/ssh-action@v0.1.8
+   - name: Copy docker-compose.yml to EC2
+     uses: appleboy/scp-action@v0.1.4
      with:
       host: ${{ secrets.SERVER_IP }}
       username: ${{ secrets.SERVER_USER }}
       key: ${{ secrets.SSH_PRIVATE_KEY }}
+      source: "./docker-compose.yml"
+      target: "~/docker-compose.yml"  # Specify as a file, not a directory
+    
       script: |
         cd ~
         docker-compose down
