@@ -35,7 +35,7 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
         
-deploy:
+  deploy:
    needs: build
    runs-on: ubuntu-latest
 
